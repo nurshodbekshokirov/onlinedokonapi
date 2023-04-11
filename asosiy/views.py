@@ -20,4 +20,22 @@ class BolimlarApiview(APIView):
     #         return Response(serializer.data, status=status.HTTP_201_CREATED)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class BolimApiview(APIView):
+    def get(self,request,pk):
+        mahsulotlar = Mahsulot.objects.filter(bolim__id=pk)
+        serializer = MahsulotSerializer(mahsulotlar, many=True)
+        return Response(serializer.data)
+class ChegirmaliAPIview(APIView):
+    def get(self,request):
+        chegirma = Mahsulot.objects.filter(chegirma__gt=0).order_by('chegirma')[:12]
+        serializer = MahsulotSerializer(chegirma, many=True)
+        return Response(serializer.data)
+
+class IzohAPIview(APIView):
+    def get(self, request, pk):
+        izoh = Izoh.objects.filter(mahsulot__id=pk)
+        serializer = IzohSerializer(izoh, many=True)
+        return  Response(serializer.data)
+
+
 # Create your views here.
