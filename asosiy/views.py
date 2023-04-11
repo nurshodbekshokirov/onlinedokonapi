@@ -36,6 +36,11 @@ class IzohAPIview(APIView):
         izoh = Izoh.objects.filter(mahsulot__id=pk)
         serializer = IzohSerializer(izoh, many=True)
         return  Response(serializer.data)
+class MahsulotApiVIew(APIView):
+    def get(self, request, pk):
+        mahsulo = Mahsulot.objects.filter(id=pk)
+        serializer = MahsulotSerializer(mahsulo, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # Create your views here.

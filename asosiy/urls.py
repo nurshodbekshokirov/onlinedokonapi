@@ -5,4 +5,5 @@ urlpatterns = [
     path('bolim/<int:pk>/', BolimApiview.as_view()),
     path("chegirmalilar/", ChegirmaliAPIview.as_view()),
     path("mahsulot/<int:pk>/izohlar/", IzohAPIview.as_view()),
+    path("mahsulot/<int:pk>/", MahsulotApiVIew.as_view()),
 ]
