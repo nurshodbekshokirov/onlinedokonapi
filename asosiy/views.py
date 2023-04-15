@@ -1,9 +1,11 @@
 from django.shortcuts import render
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 from rest_framework import status
+from rest_framework.permissions import *
 
 
 
@@ -32,10 +34,25 @@ class ChegirmaliAPIview(APIView):
         return Response(serializer.data)
 
 class IzohAPIview(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         izoh = Izoh.objects.filter(mahsulot__id=pk)
         serializer = IzohSerializer(izoh, many=True)
         return  Response(serializer.data)
+    def post(self,request,pk):
+
+        serializer = IzohSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(profil=Profil.objects.get(user=request.user),
+                            mahsulot=Mahsulot.objects.get(id=pk))
+            natija = serializer.data
+            natija['mahsulot'] = pk
+            natija['profil'] = Profil.objects.get(user=request.user).id
+            return Response(natija)
+        return Response(serializer.errors)
+
+
 class MahsulotApiVIew(APIView):
     def get(self, request, pk):
         mahsulo = Mahsulot.objects.filter(id=pk)
