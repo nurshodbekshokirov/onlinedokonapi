@@ -47,6 +47,27 @@ class LogoutApiview(APIView):
         return Response({"xabar":"Tizimdan chiqarildi"})
 
 
+class ProfilDetailAPIVIEW(APIView):
+    def get(self,request,pk):
+        profil = Profil.objects.filter(user=request.user, id=pk)
+        serializer = ProfilSerializer(profil, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    def delete(self,request,pk):
+        profil = Profil.objects.filter(user=request.user, id=pk)
+        if not profil:
+            return Response({"xabar":"profil topilmadi"})
+        profil.delete()
+        return Response({"xabar":"Profil o'chirildi"})
+    def put(self,request,pk):
+        profil = Profil.objects.filter(user=request.user, id=pk)[0]
+        serializer = ProfilSerializer(profil,data=request.data, partial=True)
+        if not profil:
+            return Response({"xabar":"profil topilmadi"})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
 
 
 

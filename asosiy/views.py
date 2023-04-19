@@ -58,6 +58,20 @@ class MahsulotApiVIew(APIView):
         mahsulo = Mahsulot.objects.filter(id=pk)
         serializer = MahsulotSerializer(mahsulo, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+class MahsulotAPIVIEW(APIView):
+    def get(self,request):
+        mahsulot = Mahsulot.objects.all()
+        serializer = MahsulotSerializer(mahsulot, many=True)
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        soz = self.request.query_params.get('qidirish')
+        if soz is None or soz == "":
+            natija = Mahsulot.objects.all()
+        else:
+            natija = Mahsulot.objects.filter(nom__contains=soz)
+        return natija
+
 
 
 # Create your views here.

@@ -1,4 +1,6 @@
+from django.db.models import Sum
 from django.utils import timezone
+from decimal import Decimal
 
 from django.db import models
 from userapp.models import Profil
@@ -19,10 +21,12 @@ class SavatItem(models.Model):
     mahsulot = models.ForeignKey(Mahsulot, on_delete=models.CASCADE)
     miqdor = models.PositiveIntegerField(default=1)
     yetkazish_sana = models.DateField()
+    yetkazish_puli = models.DecimalField(decimal_places=2, max_digits=10, default=Decimal('15000.00'))
     umumiy_narx = models.DecimalField(decimal_places=2, max_digits=10)
 
     def save(self, *args, **kwargs):
         self.umumiy_narx = (self.mahsulot.narx - self.mahsulot.narx * self.mahsulot.chegirma / 100) * self.miqdor
+        self.umumiy_narx += self.yetkazish_puli
         super().save(*args, **kwargs)
 
 
@@ -32,6 +36,14 @@ class Buyurtma(models.Model):
     berilgan_sana = models.DateTimeField(default=timezone.now)
     manzil = models.CharField(max_length=255)
     yetkazish_sana = models.DateField()
+    summa = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        itemlar = SavatItem.objects.filter(savat=self.savat)
+        summasi = itemlar.aggregate(s=Sum("umumiy_narx"))
+        self.summa = summasi.get('s')
+        super().save(*args, **kwargs)
+
 
 
 

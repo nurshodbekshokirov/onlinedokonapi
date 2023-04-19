@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'asosiy',
     'userapp',
-    'buyurtma'
+    'buyurtma',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
